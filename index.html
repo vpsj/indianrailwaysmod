@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>r/IndianRailways Mod position confirmation page</title>
+  <style>
+    :root{
+      --max-width:720px;
+      --accent:#0066cc;
+      --title-green:#1a8f36;
+      --bg:#f7f9fb;
+      --card:#ffffff;
+      --radius:14px;
+      --gap:18px;
+      --pad:20px;
+      --muted:#6b7280;
+      font-family:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+
+    html,body{
+      margin:0;
+      height:100%;
+      background:linear-gradient(180deg,var(--bg),#eef3f8);
+    }
+
+    body{
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      padding:20px;
+      color:#111827;
+    }
+
+    /* Title at top */
+    .title-wrap{
+      width:100%;
+      text-align:center;
+      margin-top:12px;
+      margin-bottom:24px;
+    }
+
+    .title-wrap h1{
+      color:var(--title-green);
+      font-size:1.45rem;
+      margin:0;
+      padding:0;
+    }
+
+    /* Center card */
+    .wrap{
+      width:100%;
+      max-width:var(--max-width);
+      background:var(--card);
+      border-radius:var(--radius);
+      box-shadow:0 8px 30px rgba(16,24,40,0.08);
+      padding:calc(var(--pad) + 6px);
+      box-sizing:border-box;
+      margin-top:20px; /* pushes card towards middle */
+    }
+
+    .lead{
+      font-weight:700;
+      margin:0 0 18px 0;
+      font-size:0.98rem;
+      text-align:center;
+    }
+
+    form{
+      display:flex;
+      flex-direction:column;
+      gap:var(--gap);
+    }
+
+    .checkbox-row{
+      display:flex;
+      gap:12px;
+      align-items:flex-start;
+      background:#fbfdff;
+      border:1px solid #e6eef7;
+      padding:12px;
+      border-radius:10px;
+    }
+
+    .checkbox-row label{
+      font-size:0.95rem;
+      color:#0f1724;
+      line-height:1.3;
+      user-select:none;
+    }
+
+    .checkbox-row input[type="checkbox"]{
+      margin-top:4px;
+      width:20px;
+      height:20px;
+      flex:0 0 24px;
+      accent-color:var(--accent);
+    }
+
+    .actions{
+      display:flex;
+      justify-content:center;
+      margin-top:6px;
+    }
+
+    button.submit-btn{
+      appearance:none;
+      border:0;
+      background:var(--accent);
+      color:white;
+      padding:14px 22px;
+      font-size:1.05rem;
+      border-radius:10px;
+      width:100%;
+      max-width:420px;
+      cursor:pointer;
+      box-shadow:0 6px 18px rgba(3,102,214,0.12);
+      transition:transform .12s ease, box-shadow .12s ease, opacity .12s ease;
+    }
+
+    button.submit-btn[disabled]{
+      opacity:0.48;
+      cursor:not-allowed;
+      box-shadow:none;
+      transform:none;
+    }
+
+    .foot{
+      margin-top:12px;
+      font-size:0.86rem;
+      color:var(--muted);
+      text-align:center;
+    }
+
+    a.link{
+      color:var(--accent);
+      text-decoration:underline;
+    }
+
+    /* Confirmation page styles */
+    .confirm {
+      text-align:center;
+      padding:28px;
+    }
+    .confirm h2 { margin:0 0 12px; font-size:1.2rem; }
+    .confirm p { margin:8px 0; color:#1f2937; line-height:1.5; }
+    .confirm .chat-link {
+      display:inline-block;
+      margin-top:12px;
+      padding:10px 14px;
+      background:#f1f8ff;
+      border-radius:8px;
+      border:1px solid #d6e9ff;
+      text-decoration:none;
+      color:var(--accent);
+      font-weight:600;
+    }
+    .note {
+      margin-top:16px;
+      font-size:0.95rem;
+      color:#374151;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="title-wrap">
+    <h1>r/IndianRailways Mod position confirmation page</h1>
+  </div>
+
+  <main class="wrap" id="main-wrap" role="main">
+
+    <p class="lead" id="lead"><strong>Please agree to the following terms/points and you will be ready to moderate the Sub!</strong></p>
+
+    <form id="confirm-form" aria-labelledby="lead" novalidate>
+      <div class="checkbox-row">
+        <input type="checkbox" id="chk-read" name="chk-read" />
+        <label for="chk-read">I confirm that I have read and understood the entire mod onboarding guide and I will ask for clarification from the senior mods if I'm ever in doubt</label>
+      </div>
+
+      <div class="checkbox-row">
+        <input type="checkbox" id="chk-neutral" name="chk-neutral" />
+        <label for="chk-neutral">I confirm that I will strictly operate in a neutral, impartial capacity and will not let any personal bias get in the way of moderating the subreddit.</label>
+      </div>
+
+      <div class="actions">
+        <button type="submit" class="submit-btn" id="submitBtn" disabled aria-disabled="true">Confirm & Continue</button>
+      </div>
+
+      <div class="foot">
+        <small>Both checkboxes are mandatory. By confirming you accept the moderator responsibilities.</small>
+      </div>
+    </form>
+  </main>
+
+  <script>
+    (function(){
+      const chkRead = document.getElementById('chk-read');
+      const chkNeutral = document.getElementById('chk-neutral');
+      const submitBtn = document.getElementById('submitBtn');
+      const form = document.getElementById('confirm-form');
+      const mainWrap = document.getElementById('main-wrap');
+
+      function updateButtonState(){
+        const bothChecked = chkRead.checked && chkNeutral.checked;
+        submitBtn.disabled = !bothChecked;
+        submitBtn.setAttribute('aria-disabled', String(!bothChecked));
+      }
+
+      chkRead.addEventListener('change', updateButtonState);
+      chkNeutral.addEventListener('change', updateButtonState);
+
+      form.addEventListener('submit', function(ev){
+        ev.preventDefault();
+        if (submitBtn.disabled) return;
+
+        mainWrap.innerHTML = `
+          <section class="confirm" role="status" aria-live="polite">
+            <h2>Congratulations — your moderator position has been confirmed</h2>
+            <p>Please go to the <a class="chat-link" href="https://www.reddit.com/c/chat9K4gwKOB/s/TsC4jjn4Xz" target="_blank" rel="noopener">mod-only chat channel</a> and type <strong>"Onboarding Completed"</strong></p>
+            <p class="note">After you type <strong>"Onboarding Completed"</strong> you'll receive some starting assignments.</p>
+          </section>
+        `;
+      });
+
+      updateButtonState();
+    })();
+  </script>
+
+</body>
+</html>
